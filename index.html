@@ -80,10 +80,12 @@
     position: absolute;
     top: 1.1rem;
     left: 1.1rem; /* physical left on purpose — must not jump when dir flips */
+    direction: ltr; /* fixed button order too — lang then share, in both languages */
     display: flex;
     gap: .5rem;
     z-index: 10;
   }
+  html[dir="rtl"] #share-menu { direction: rtl; }
   .top-btn {
     display: inline-flex;
     align-items: center;
