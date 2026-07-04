@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>צביה כפרי — גלריית ציורים</title>
+<meta name="description" content="גלריית הציורים של צביה כפרי — אקריליק ושמן על בד ועץ. כל היצירות זמינות לרכישה בגלריית Under $1000.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="צביה כפרי — גלריית ציורים">
+<meta property="og:description" content="ציורי אקריליק ושמן מאת צביה כפרי. כל היצירות זמינות לרכישה בגלריית Under $1000.">
+<meta property="og:image" content="https://h6kx5up96ffz2y7n.public.blob.vercel-storage.com/products/temp-1782556324520-g47vao2tjwo-1782556517800-yjmt883w4th.webp">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎨</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Assistant:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f3ec;
+    --card: #fffdf9;
+    --ink: #2b241b;
+    --muted: #8a7d6a;
+    --accent: #a26a3f;
+    --line: #e6ddcf;
+    --serif: 'Frank Ruhl Libre', 'Times New Roman', serif;
+    --sans: 'Assistant', 'Segoe UI', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.6;
+  }
+
+  /* ---------- header ---------- */
+  header {
+    text-align: center;
+    padding: 4.5rem 1.5rem 3rem;
+    max-width: 46rem;
+    margin-inline: auto;
+  }
+  header .kicker {
+    font-size: .8rem;
+    letter-spacing: .35em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-block-end: 1rem;
+  }
+  header h1 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(2.6rem, 7vw, 4rem);
+    line-height: 1.15;
+  }
+  header .subtitle {
+    margin-block-start: .9rem;
+    color: var(--muted);
+    font-size: 1.05rem;
+    font-weight: 300;
+  }
+  header .rule {
+    width: 3.5rem;
+    height: 2px;
+    background: var(--accent);
+    margin: 1.6rem auto 0;
+    opacity: .6;
+  }
+  .gallery-link {
+    display: inline-block;
+    margin-block-start: 1.6rem;
+    font-size: .95rem;
+    color: var(--accent);
+    text-decoration: none;
+    border-block-end: 1px solid transparent;
+    transition: border-color .2s;
+  }
+  .gallery-link:hover { border-color: var(--accent); }
+
+  /* ---------- grid ---------- */
+  main {
+    max-width: 78rem;
+    margin-inline: auto;
+    padding: 0 1.25rem 4rem;
+    columns: 4 17rem;
+    column-gap: 1.25rem;
+  }
+  .card {
+    break-inside: avoid;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-block-end: 1.25rem;
+    box-shadow: 0 1px 3px rgba(60, 45, 20, .07);
+    transition: box-shadow .25s, transform .25s;
+  }
+  .card:hover {
+    box-shadow: 0 10px 30px rgba(60, 45, 20, .14);
+    transform: translateY(-3px);
+  }
+  .card img {
+    display: block;
+    width: 100%;
+    height: auto;
+    cursor: zoom-in;
+    background: #eee7da;
+  }
+  .card .info { padding: .9rem 1rem 1rem; }
+  .card h2 {
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+  .card .meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    color: var(--muted);
+    font-size: .85rem;
+    margin-block-start: .2rem;
+  }
+  .card .price { color: var(--ink); font-weight: 600; font-size: .95rem; }
+  .card .actions {
+    display: flex;
+    gap: .5rem;
+    margin-block-start: .75rem;
+  }
+  .btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .4rem;
+    font-family: var(--sans);
+    font-size: .85rem;
+    font-weight: 600;
+    padding: .5rem .75rem;
+    border-radius: 4px;
+    border: 1px solid var(--accent);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .2s, color .2s;
+  }
+  .btn-buy { background: var(--accent); color: #fff; }
+  .btn-buy:hover { background: #8a5730; }
+  .btn-share { background: transparent; color: var(--accent); flex: 0 0 auto; }
+  .btn-share:hover { background: var(--accent); color: #fff; }
+  .btn svg { width: 1em; height: 1em; }
+
+  /* ---------- lightbox ---------- */
+  #lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: none;
+    background: rgba(20, 16, 10, .97);
+    overflow-y: auto;
+    padding: 2rem 1rem;
+  }
+  #lightbox.open { display: block; }
+  .lb-inner {
+    max-width: 56rem;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: lbIn .25s ease;
+  }
+  @keyframes lbIn { from { opacity: 0; transform: scale(.97); } }
+  .lb-inner img {
+    max-width: 100%;
+    max-height: 72vh;
+    border-radius: 4px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .5);
+    background: #eee7da;
+  }
+  .lb-panel {
+    color: #f2ecdf;
+    text-align: center;
+    max-width: 40rem;
+    padding: 1.4rem .5rem 3rem;
+  }
+  .lb-panel h2 { font-family: var(--serif); font-weight: 500; font-size: 1.7rem; }
+  .lb-panel .en { color: #b8ac97; font-size: .95rem; font-style: italic; }
+  .lb-panel .dims { color: #b8ac97; font-size: .9rem; margin-block-start: .3rem; }
+  .lb-panel p.desc { margin-block-start: .8rem; font-weight: 300; font-size: .98rem; }
+  .lb-panel .price { margin-block-start: .7rem; font-size: 1.15rem; font-weight: 600; }
+  .lb-actions {
+    display: flex;
+    gap: .7rem;
+    justify-content: center;
+    margin-block-start: 1.1rem;
+    flex-wrap: wrap;
+  }
+  .lb-actions .btn { flex: 0 0 auto; padding-inline: 1.3rem; }
+  .lb-close, .lb-nav {
+    position: fixed;
+    background: rgba(255, 255, 255, .1);
+    border: none;
+    color: #f2ecdf;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    font-size: 1.3rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .2s;
+    z-index: 51;
+  }
+  .lb-close:hover, .lb-nav:hover { background: rgba(255, 255, 255, .25); }
+  .lb-close { top: 1rem; inset-inline-start: 1rem; }
+  .lb-nav.prev { top: 50%; inset-inline-end: .75rem; transform: translateY(-50%); }
+  .lb-nav.next { top: 50%; inset-inline-start: .75rem; transform: translateY(-50%); }
+  @media (max-width: 640px) { .lb-nav { display: none; } }
+
+  /* ---------- toast ---------- */
+  #toast {
+    position: fixed;
+    bottom: 1.5rem;
+    inset-inline-start: 50%;
+    transform: translateX(50%);
+    background: var(--ink);
+    color: #fff;
+    padding: .6rem 1.3rem;
+    border-radius: 100px;
+    font-size: .9rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s;
+    z-index: 60;
+  }
+  #toast.show { opacity: 1; }
+
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: .9rem;
+    padding: 2.5rem 1rem 3.5rem;
+    border-block-start: 1px solid var(--line);
+  }
+  footer a { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="kicker">Tzvia Kafri · Fine Art</div>
+  <h1>צביה כפרי</h1>
+  <p class="subtitle">ציורי אקריליק ושמן על בד ועץ — נוף, טבע ורגש בצבע</p>
+  <div class="rule"></div>
+  <a class="gallery-link" id="full-gallery-link" href="#" target="_blank" rel="noopener">↗ לכל היצירות בגלריית Under $1000</a>
+</header>
+
+<main id="grid"></main>
+
+<div id="lightbox" aria-modal="true" role="dialog">
+  <button class="lb-close" aria-label="סגירה" onclick="closeLightbox()">✕</button>
+  <button class="lb-nav prev" aria-label="הקודם" onclick="navLightbox(-1)">‹</button>
+  <button class="lb-nav next" aria-label="הבא" onclick="navLightbox(1)">›</button>
+  <div class="lb-inner">
+    <img id="lb-img" alt="">
+    <div class="lb-panel">
+      <h2 id="lb-title"></h2>
+      <div class="en" id="lb-en"></div>
+      <div class="dims" id="lb-dims"></div>
+      <p class="desc" id="lb-desc"></p>
+      <div class="price" id="lb-price"></div>
+      <div class="lb-actions">
+        <a class="btn btn-buy" id="lb-buy" href="#" target="_blank" rel="noopener">לצפייה ולרכישה בגלריה</a>
+        <button class="btn btn-share" id="lb-share">שיתוף היצירה</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast">הקישור הועתק 🎨</div>
+
+<footer>
+  כל היצירות זמינות לרכישה בגלריית
+  <a id="footer-gallery-link" href="#" target="_blank" rel="noopener">Under $1000</a>
+</footer>
+
+<script src="paintings.js"></script>
+<script>
+  const paintings = window.PAINTINGS || [];
+  const fmt = new Intl.NumberFormat('he-IL', { style: 'currency', currency: 'ILS', maximumFractionDigits: 0 });
+  const shareIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>';
+
+  document.getElementById('full-gallery-link').href = window.GALLERY_URL;
+  document.getElementById('footer-gallery-link').href = window.GALLERY_URL;
+
+  const grid = document.getElementById('grid');
+  paintings.forEach((p, i) => {
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.id = p.slug;
+    const dims = p.widthCm && p.heightCm ? `${p.widthCm}×${p.heightCm} ס״מ` : '';
+    card.innerHTML = `
+      <img src="${p.localThumb || p.thumb || p.image}" alt="${p.title}" loading="lazy" onclick="openLightbox(${i})"
+           onerror="this.onerror=null;this.src='${p.thumb || p.image}'">
+      <div class="info">
+        <h2>${p.title}</h2>
+        <div class="meta"><span>${dims}</span><span class="price">${p.price ? fmt.format(p.price) : ''}</span></div>
+        <div class="actions">
+          <a class="btn btn-buy" href="${p.url}" target="_blank" rel="noopener">לרכישה בגלריה</a>
+          <button class="btn btn-share" aria-label="שיתוף" onclick="share(${i})">${shareIcon}</button>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+
+  /* ---------- lightbox ---------- */
+  let current = -1;
+  const lb = document.getElementById('lightbox');
+
+  function openLightbox(i) {
+    current = i;
+    const p = paintings[i];
+    const lbImg = document.getElementById('lb-img');
+    lbImg.onerror = () => { lbImg.onerror = null; lbImg.src = p.image || p.thumb; };
+    lbImg.src = p.localImage || p.image || p.thumb;
+    lbImg.alt = p.title;
+    document.getElementById('lb-title').textContent = p.title;
+    document.getElementById('lb-en').textContent = p.titleEn || '';
+    document.getElementById('lb-dims').textContent =
+      p.widthCm && p.heightCm ? `${p.widthCm}×${p.heightCm} ס״מ` : '';
+    document.getElementById('lb-desc').textContent = p.description || '';
+    document.getElementById('lb-price').textContent = p.price ? fmt.format(p.price) : '';
+    document.getElementById('lb-buy').href = p.url;
+    document.getElementById('lb-share').onclick = () => share(i);
+    lb.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    history.replaceState(null, '', '#' + p.slug);
+  }
+
+  function closeLightbox() {
+    lb.classList.remove('open');
+    document.body.style.overflow = '';
+    current = -1;
+    history.replaceState(null, '', location.pathname + location.search);
+  }
+
+  function navLightbox(dir) {
+    if (current < 0) return;
+    openLightbox((current + dir + paintings.length) % paintings.length);
+  }
+
+  lb.addEventListener('click', (e) => { if (e.target === lb) closeLightbox(); });
+  document.addEventListener('keydown', (e) => {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowRight') navLightbox(-1); /* RTL: right = previous */
+    if (e.key === 'ArrowLeft') navLightbox(1);
+  });
+
+  /* ---------- share ---------- */
+  async function share(i) {
+    const p = paintings[i];
+    const url = location.origin + location.pathname + '#' + p.slug;
+    const text = `"${p.title}" — ציור מאת צביה כפרי`;
+    if (navigator.share) {
+      try { await navigator.share({ title: text, text, url }); return; } catch (e) { /* cancelled */ }
+    }
+    await navigator.clipboard.writeText(url);
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2200);
+  }
+
+  /* ---------- deep link: #slug opens that painting ---------- */
+  function openFromHash() {
+    if (!location.hash) return;
+    const idx = paintings.findIndex((p) => p.slug === decodeURIComponent(location.hash.slice(1)));
+    if (idx >= 0) setTimeout(() => openLightbox(idx), 150);
+  }
+  window.addEventListener('hashchange', openFromHash);
+  openFromHash();
+</script>
+</body>
+</html>
