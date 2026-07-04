@@ -32,23 +32,21 @@ Preview locally: `npx serve .` then open http://localhost:3000.
   painting in the lightbox.
 - Every painting links to its **under1000.com product page** for purchase.
 
-## Free hosting (no ads)
+## Hosting
 
-**Recommended — GitHub Pages:**
+**Live at: https://udikafri.github.io/tzvia-gallery/**
+(GitHub Pages, repo `udikafri/tzvia-gallery`, deploys automatically from `master`.)
+
+After updating paintings:
 
 ```bash
-cd D:/Code/tzvia-gallery
-git init -b master && git add . && git commit -m "Tzvia Kafri gallery"
-gh repo create tzvia-gallery --public --source . --push
-gh api -X POST repos/{owner}/tzvia-gallery/pages -f "source[branch]=master" -f "source[path]=/"
+git add paintings.js images && git commit -m "new paintings" && git push
 ```
 
-Site will be live at `https://<username>.github.io/tzvia-gallery/`.
-After updating paintings: `git add paintings.js && git commit -m "new paintings" && git push`.
-
-Alternatives (equally free, no ads): Cloudflare Pages, Netlify, Vercel — drag the
-folder into their dashboard or connect the repo. Any of them also lets you attach
-a custom domain (e.g. `tzvia-art.com`, ~₪40/year) later.
+The repo is hardened: issues/projects/wiki disabled, GitHub Actions disabled,
+no collaborators — only the owner's account can change anything. A custom
+domain (e.g. `tzvia-art.com`, ~₪40/year) can be attached later in the repo's
+Pages settings.
 
 ## Notes
 
