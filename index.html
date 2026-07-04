@@ -79,7 +79,7 @@
   #lang-toggle {
     position: absolute;
     top: 1.1rem;
-    inset-inline-end: 1.1rem;
+    left: 1.1rem; /* physical left on purpose — must not jump when dir flips */
     background: transparent;
     border: 1px solid var(--line);
     color: var(--muted);
@@ -262,10 +262,10 @@
 </head>
 <body>
 
-<button id="lang-toggle" onclick="toggleLang()">English</button>
+<button id="lang-toggle" onclick="toggleLang()" aria-label="Switch language">EN/עב</button>
 
 <header>
-  <div class="kicker" id="h-kicker">Tzvia Kafri · Fine Art</div>
+  <div class="kicker" id="h-kicker">Zivia Kafri · Fine Art</div>
   <h1 id="h-name">צביה כפרי</h1>
   <p class="subtitle" id="h-subtitle"></p>
   <div class="rule"></div>
@@ -308,7 +308,7 @@
 
   const I18N = {
     he: {
-      dir: 'rtl', locale: 'he-IL', toggle: 'English',
+      dir: 'rtl', locale: 'he-IL',
       docTitle: 'צביה כפרי — גלריית ציורים',
       name: 'צביה כפרי',
       subtitle: 'ציורי אקריליק ושמן על בד ועץ — נוף, טבע ורגש בצבע',
@@ -323,9 +323,9 @@
       shareText: (t) => `"${t}" — ציור מאת צביה כפרי`,
     },
     en: {
-      dir: 'ltr', locale: 'en-IL', toggle: 'עברית',
-      docTitle: 'Tzvia Kafri — Painting Gallery',
-      name: 'Tzvia Kafri',
+      dir: 'ltr', locale: 'en-IL',
+      docTitle: 'Zivia Kafri — Painting Gallery',
+      name: 'Zivia Kafri',
       subtitle: 'Acrylic and oil paintings on canvas and wood — landscape, nature and emotion in color',
       galleryLink: '↗ All works at the Under $1000 gallery',
       buy: 'Buy at the gallery',
@@ -335,7 +335,7 @@
       toast: 'Link copied 🎨',
       footer: 'All works are available for purchase at',
       cm: 'cm',
-      shareText: (t) => `"${t}" — a painting by Tzvia Kafri`,
+      shareText: (t) => `"${t}" — a painting by Zivia Kafri`,
     },
   };
 
@@ -362,7 +362,6 @@
     document.documentElement.lang = lang;
     document.documentElement.dir = t.dir;
     document.title = t.docTitle;
-    document.getElementById('lang-toggle').textContent = t.toggle;
     document.getElementById('h-name').textContent = t.name;
     document.getElementById('h-subtitle').textContent = t.subtitle;
     document.getElementById('full-gallery-link').textContent = t.galleryLink;

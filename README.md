@@ -1,6 +1,6 @@
 # צביה כפרי — Gallery Site
 
-A free, ad-free, single-page gallery for Tzvia Kafri's paintings. Data is pulled
+A free, ad-free, single-page gallery for Zivia Kafri's paintings. Data is pulled
 from her [under1000.com gallery page](https://www.under1000.com/he-IL/products?search=%D7%A6%D7%91%D7%99%D7%94+%D7%9B%D7%A4%D7%A8%D7%99).
 
 ## Files
