@@ -18,9 +18,9 @@
     --bg: #f7f3ec;
     --card: #fffdf9;
     --ink: #2b241b;
-    --muted: #8a7d6a;
-    --accent: #a26a3f;
-    --line: #e6ddcf;
+    --muted: #6f6250;
+    --accent: #9a5f33;
+    --line: #d9cdb9;
     --serif: 'Frank Ruhl Libre', 'Times New Roman', serif;
     --sans: 'Assistant', 'Segoe UI', sans-serif;
   }
@@ -56,8 +56,8 @@
   header .subtitle {
     margin-block-start: .9rem;
     color: var(--muted);
-    font-size: 1.05rem;
-    font-weight: 300;
+    font-size: 1.1rem;
+    font-weight: 400;
   }
   header .rule {
     width: 3.5rem;
@@ -69,13 +69,14 @@
   .gallery-link {
     display: inline-block;
     margin-block-start: 1.6rem;
-    font-size: .95rem;
+    font-size: 1rem;
+    font-weight: 600;
     color: var(--accent);
     text-decoration: none;
-    border-block-end: 1px solid transparent;
-    transition: border-color .2s;
+    border-block-end: 1px solid currentColor;
+    transition: opacity .2s;
   }
-  .gallery-link:hover { border-color: var(--accent); }
+  .gallery-link:hover { opacity: .75; }
   #top-controls {
     position: absolute;
     top: 1.1rem;
@@ -90,17 +91,19 @@
     display: inline-flex;
     align-items: center;
     gap: .4rem;
-    background: var(--bg);
-    border: 1px solid var(--line);
-    color: var(--muted);
+    background: var(--card);
+    border: 1.5px solid var(--accent);
+    color: var(--accent);
     font-family: var(--sans);
-    font-size: .85rem;
-    padding: .35rem .9rem;
+    font-size: .9rem;
+    font-weight: 600;
+    padding: .45rem 1rem;
     border-radius: 100px;
     cursor: pointer;
-    transition: color .2s, border-color .2s;
+    box-shadow: 0 2px 8px rgba(60, 45, 20, .12);
+    transition: background .2s, color .2s;
   }
-  .top-btn:hover { color: var(--accent); border-color: var(--accent); }
+  .top-btn:hover { background: var(--accent); color: #fff; }
   .top-btn svg { width: 1em; height: 1em; }
   #share-menu {
     position: absolute;
@@ -166,7 +169,7 @@
   .card .info { padding: .9rem 1rem 1rem; }
   .card h2 {
     font-family: var(--serif);
-    font-size: 1.15rem;
+    font-size: 1.25rem;
     font-weight: 500;
     line-height: 1.3;
   }
@@ -175,10 +178,10 @@
     justify-content: space-between;
     align-items: baseline;
     color: var(--muted);
-    font-size: .85rem;
+    font-size: .9rem;
     margin-block-start: .2rem;
   }
-  .card .price { color: var(--ink); font-weight: 600; font-size: .95rem; }
+  .card .price { color: var(--ink); font-weight: 600; font-size: 1rem; }
   .card .actions {
     display: flex;
     gap: .5rem;
@@ -240,8 +243,8 @@
     padding: 1.4rem .5rem 3rem;
   }
   .lb-panel h2 { font-family: var(--serif); font-weight: 500; font-size: 1.7rem; }
-  .lb-panel .en { color: #b8ac97; font-size: .95rem; font-style: italic; }
-  .lb-panel .dims { color: #b8ac97; font-size: .9rem; margin-block-start: .3rem; }
+  .lb-panel .en { color: #d4c8b0; font-size: 1rem; font-style: italic; }
+  .lb-panel .dims { color: #d4c8b0; font-size: .95rem; margin-block-start: .3rem; }
   .lb-panel p.desc { margin-block-start: .8rem; font-weight: 300; font-size: .98rem; }
   .lb-panel .price { margin-block-start: .7rem; font-size: 1.15rem; font-weight: 600; }
   .lb-actions {
@@ -295,10 +298,11 @@
   footer {
     text-align: center;
     color: var(--muted);
-    font-size: .9rem;
+    font-size: .95rem;
     padding: 2.5rem 1rem 3.5rem;
     border-block-start: 1px solid var(--line);
   }
+  footer a { font-weight: 600; }
   footer a { color: var(--accent); }
 </style>
 </head>
