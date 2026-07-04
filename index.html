@@ -76,11 +76,19 @@
     transition: border-color .2s;
   }
   .gallery-link:hover { border-color: var(--accent); }
-  #lang-toggle {
+  #top-controls {
     position: absolute;
     top: 1.1rem;
     left: 1.1rem; /* physical left on purpose — must not jump when dir flips */
-    background: transparent;
+    display: flex;
+    gap: .5rem;
+    z-index: 10;
+  }
+  .top-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: var(--bg);
     border: 1px solid var(--line);
     color: var(--muted);
     font-family: var(--sans);
@@ -90,7 +98,39 @@
     cursor: pointer;
     transition: color .2s, border-color .2s;
   }
-  #lang-toggle:hover { color: var(--accent); border-color: var(--accent); }
+  .top-btn:hover { color: var(--accent); border-color: var(--accent); }
+  .top-btn svg { width: 1em; height: 1em; }
+  #share-menu {
+    position: absolute;
+    top: calc(100% + .5rem);
+    left: 0;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: 0 12px 32px rgba(60, 45, 20, .18);
+    padding: .35rem;
+    min-width: 13rem;
+    display: none;
+    flex-direction: column;
+  }
+  #share-menu.open { display: flex; }
+  .share-item {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .45rem .6rem;
+    border: none;
+    background: none;
+    border-radius: 7px;
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: .9rem;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: start;
+  }
+  .share-item:hover { background: var(--bg); }
+  .share-item svg { width: 1.35rem; height: 1.35rem; flex: 0 0 auto; }
 
   /* ---------- grid ---------- */
   main {
@@ -262,7 +302,11 @@
 </head>
 <body>
 
-<button id="lang-toggle" onclick="toggleLang()" aria-label="Switch language">EN/עב</button>
+<div id="top-controls">
+  <button id="lang-toggle" class="top-btn" onclick="toggleLang()" aria-label="Switch language">EN/עב</button>
+  <button id="site-share-btn" class="top-btn" onclick="toggleShareMenu(event)" aria-haspopup="true" aria-expanded="false"></button>
+  <div id="share-menu" role="menu"></div>
+</div>
 
 <header>
   <div class="kicker" id="h-kicker">Zivia Kafri · Fine Art</div>
@@ -321,6 +365,12 @@
       footer: 'כל היצירות זמינות לרכישה בגלריית',
       cm: 'ס״מ',
       shareText: (t) => `"${t}" — ציור מאת צביה כפרי`,
+      shareSite: 'שיתוף',
+      siteShareText: 'גלריית הציורים של צביה כפרי',
+      copyLink: 'העתקת קישור',
+      email: 'אימייל',
+      more: 'עוד אפשרויות…',
+      instaToast: 'הקישור הועתק — הדביקו בסטורי או בביו באינסטגרם',
     },
     en: {
       dir: 'ltr', locale: 'en-IL',
@@ -336,6 +386,12 @@
       footer: 'All works are available for purchase at',
       cm: 'cm',
       shareText: (t) => `"${t}" — a painting by Zivia Kafri`,
+      shareSite: 'Share',
+      siteShareText: 'Zivia Kafri — painting gallery',
+      copyLink: 'Copy link',
+      email: 'Email',
+      more: 'More options…',
+      instaToast: 'Link copied — paste it into your Instagram story or bio',
     },
   };
 
@@ -366,9 +422,10 @@
     document.getElementById('h-subtitle').textContent = t.subtitle;
     document.getElementById('full-gallery-link').textContent = t.galleryLink;
     document.getElementById('footer-text').textContent = t.footer;
-    document.getElementById('toast').textContent = t.toast;
     document.getElementById('lb-buy').textContent = t.buyLb;
     document.getElementById('lb-share').textContent = t.share;
+    document.getElementById('site-share-btn').innerHTML = `${shareIcon}<span>${t.shareSite}</span>`;
+    buildShareMenu();
   }
 
   function renderGrid() {
@@ -449,7 +506,17 @@
     if (e.key === 'ArrowLeft') navLightbox(lang === 'he' ? 1 : -1);
   });
 
-  /* ---------- share ---------- */
+  /* ---------- toast ---------- */
+  let toastTimer;
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+  }
+
+  /* ---------- share a single painting ---------- */
   async function share(i) {
     const p = paintings[i];
     const url =
@@ -459,10 +526,102 @@
       try { await navigator.share({ title: text, text, url }); return; } catch (e) { /* cancelled */ }
     }
     await navigator.clipboard.writeText(url);
-    const toast = document.getElementById('toast');
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2200);
+    showToast(T().toast);
   }
+
+  /* ---------- share the whole site ---------- */
+  const brandIcon = (bg, glyph) =>
+    `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="${bg}"/>${glyph}</svg>`;
+  const SICONS = {
+    whatsapp: brandIcon('#25D366',
+      '<path fill="#fff" d="M12 5.6a6.1 6.1 0 0 0-5.2 9.3L6 18l3.2-.8A6.1 6.1 0 1 0 12 5.6zm3.1 8.6c-.2.5-1 .9-1.4.9-.4.1-.8.1-2.6-.6-2.2-.9-3.5-3.1-3.6-3.3-.1-.1-.8-1.1-.8-2.1 0-1 .5-1.5.7-1.7.2-.2.4-.2.6-.2h.4c.1 0 .3 0 .5.4l.7 1.6c0 .1.1.3 0 .4l-.3.4-.4.4c-.1.1-.2.3-.1.5.1.2.6 1 1.3 1.6.9.8 1.6 1 1.9 1.1.2.1.4.1.5-.1l.6-.8c.2-.2.3-.2.5-.1l1.5.7c.2.1.4.2.4.3.1.1.1.4-.1.6z"/>'),
+    facebook: brandIcon('#1877F2',
+      '<path fill="#fff" d="M13.3 19v-6.2h2.1l.3-2.4h-2.4V8.9c0-.7.2-1.2 1.2-1.2h1.3V5.6c-.2 0-1-.1-1.9-.1-1.9 0-3.2 1.2-3.2 3.3v1.6H8.6v2.4h2.1V19h2.6z"/>'),
+    telegram: brandIcon('#229ED9',
+      '<path fill="#fff" d="M5.6 11.7l11.6-4.5c.5-.2 1 .1.8.9l-2 9.3c-.1.6-.5.8-1 .5l-3-2.2-1.5 1.4c-.2.2-.3.3-.6.3l.2-3.1 5.7-5.1c.2-.2 0-.3-.3-.1l-7 4.4-3-.9c-.6-.2-.6-.7.1-.9z"/>'),
+    x: brandIcon('#000000',
+      '<path fill="#fff" d="M13.5 10.9L18.3 5.5h-1.4l-4 4.6-3.2-4.6H5.5l5 7.2-5 5.8h1.4l4.3-5 3.5 5h4.2l-5.4-7.6zm-1.6 1.8l-.5-.7-4-5.6h1.7l3.2 4.6.5.7 4.2 6h-1.7l-3.4-5z"/>'),
+    instagram: brandIcon('#E4405F',
+      '<rect x="6.8" y="6.8" width="10.4" height="10.4" rx="3" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="2.5" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="15.4" cy="8.6" r=".9" fill="#fff"/>'),
+    email: brandIcon('#8a7d6a',
+      '<rect x="5.8" y="7.8" width="12.4" height="8.8" rx="1.5" fill="none" stroke="#fff" stroke-width="1.5"/><path d="M6.5 9l5.5 4.2L17.5 9" fill="none" stroke="#fff" stroke-width="1.5"/>'),
+    copy: brandIcon('#a26a3f',
+      '<path fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" d="M10.6 13.4l2.8-2.8M9.2 11.8l-1.6 1.6a2.4 2.4 0 0 0 3.4 3.4l1.6-1.6M14.8 12.2l1.6-1.6a2.4 2.4 0 0 0-3.4-3.4l-1.6 1.6"/>'),
+    more: brandIcon('#5f5443',
+      '<g fill="none" stroke="#fff" stroke-width="1.5"><circle cx="15.5" cy="7.5" r="1.8"/><circle cx="8.5" cy="12" r="1.8"/><circle cx="15.5" cy="16.5" r="1.8"/><path d="M10.1 11.1l3.8-2.7M10.1 12.9l3.8 2.7"/></g>'),
+  };
+
+  function siteShareUrl() {
+    return location.origin + location.pathname + (lang === 'en' ? '?lang=en' : '');
+  }
+
+  function buildShareMenu() {
+    const t = T();
+    const url = encodeURIComponent(siteShareUrl());
+    const text = encodeURIComponent(t.siteShareText);
+    const items = [
+      { icon: 'whatsapp', label: 'WhatsApp', href: `https://wa.me/?text=${text}%0A${url}` },
+      { icon: 'facebook', label: 'Facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${url}` },
+      { icon: 'telegram', label: 'Telegram', href: `https://t.me/share/url?url=${url}&text=${text}` },
+      { icon: 'x', label: 'X (Twitter)', href: `https://twitter.com/intent/tweet?url=${url}&text=${text}` },
+      { icon: 'instagram', label: 'Instagram', action: 'instagram' },
+      { icon: 'email', label: t.email, href: `mailto:?subject=${text}&body=${text}%0A${url}` },
+      { icon: 'copy', label: t.copyLink, action: 'copy' },
+    ];
+    if (navigator.share) items.push({ icon: 'more', label: t.more, action: 'native' });
+    const menu = document.getElementById('share-menu');
+    menu.innerHTML = '';
+    for (const it of items) {
+      let el;
+      if (it.href) {
+        el = document.createElement('a');
+        el.href = it.href;
+        el.target = '_blank';
+        el.rel = 'noopener';
+        el.addEventListener('click', closeShareMenu);
+      } else {
+        el = document.createElement('button');
+        el.type = 'button';
+        el.addEventListener('click', () => shareAction(it.action));
+      }
+      el.className = 'share-item';
+      el.setAttribute('role', 'menuitem');
+      el.innerHTML = `${SICONS[it.icon]}<span>${it.label}</span>`;
+      menu.appendChild(el);
+    }
+  }
+
+  async function shareAction(kind) {
+    const t = T();
+    if (kind === 'copy' || kind === 'instagram') {
+      await navigator.clipboard.writeText(siteShareUrl());
+      showToast(kind === 'instagram' ? t.instaToast : t.toast);
+    } else if (kind === 'native') {
+      try {
+        await navigator.share({ title: t.siteShareText, text: t.siteShareText, url: siteShareUrl() });
+      } catch (e) { /* cancelled */ }
+    }
+    closeShareMenu();
+  }
+
+  function toggleShareMenu(e) {
+    e.stopPropagation();
+    const menu = document.getElementById('share-menu');
+    const open = menu.classList.toggle('open');
+    document.getElementById('site-share-btn').setAttribute('aria-expanded', String(open));
+  }
+
+  function closeShareMenu() {
+    document.getElementById('share-menu').classList.remove('open');
+    document.getElementById('site-share-btn').setAttribute('aria-expanded', 'false');
+  }
+
+  document.addEventListener('click', (e) => {
+    if (!document.getElementById('top-controls').contains(e.target)) closeShareMenu();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeShareMenu();
+  });
 
   /* ---------- init ---------- */
   setLang(lang);

@@ -45,8 +45,8 @@ the `OVERRIDES` map at the top of `update-paintings.mjs` — edit them there.
 
 ## Hosting
 
-**Live at: https://udikafri.github.io/tzvia-gallery/**
-(GitHub Pages, repo `udikafri/tzvia-gallery`, deploys automatically from `master`.)
+**Live at: https://udikafri.github.io/zivia-gallery/**
+(GitHub Pages, repo `udikafri/zivia-gallery`, deploys automatically from `master`.)
 
 After updating paintings:
 
@@ -56,7 +56,7 @@ git add paintings.js images && git commit -m "new paintings" && git push
 
 The repo is hardened: issues/projects/wiki disabled, GitHub Actions disabled,
 no collaborators — only the owner's account can change anything. A custom
-domain (e.g. `tzvia-art.com`, ~₪40/year) can be attached later in the repo's
+domain (e.g. `zivia-art.com`, ~₪40/year) can be attached later in the repo's
 Pages settings.
 
 ## Notes
