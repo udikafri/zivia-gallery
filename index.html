@@ -76,6 +76,21 @@
     transition: border-color .2s;
   }
   .gallery-link:hover { border-color: var(--accent); }
+  #lang-toggle {
+    position: absolute;
+    top: 1.1rem;
+    inset-inline-end: 1.1rem;
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    font-family: var(--sans);
+    font-size: .85rem;
+    padding: .35rem .9rem;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: color .2s, border-color .2s;
+  }
+  #lang-toggle:hover { color: var(--accent); border-color: var(--accent); }
 
   /* ---------- grid ---------- */
   main {
@@ -247,12 +262,14 @@
 </head>
 <body>
 
+<button id="lang-toggle" onclick="toggleLang()">English</button>
+
 <header>
-  <div class="kicker">Tzvia Kafri · Fine Art</div>
-  <h1>צביה כפרי</h1>
-  <p class="subtitle">ציורי אקריליק ושמן על בד ועץ — נוף, טבע ורגש בצבע</p>
+  <div class="kicker" id="h-kicker">Tzvia Kafri · Fine Art</div>
+  <h1 id="h-name">צביה כפרי</h1>
+  <p class="subtitle" id="h-subtitle"></p>
   <div class="rule"></div>
-  <a class="gallery-link" id="full-gallery-link" href="#" target="_blank" rel="noopener">↗ לכל היצירות בגלריית Under $1000</a>
+  <a class="gallery-link" id="full-gallery-link" href="#" target="_blank" rel="noopener"></a>
 </header>
 
 <main id="grid"></main>
@@ -270,48 +287,124 @@
       <p class="desc" id="lb-desc"></p>
       <div class="price" id="lb-price"></div>
       <div class="lb-actions">
-        <a class="btn btn-buy" id="lb-buy" href="#" target="_blank" rel="noopener">לצפייה ולרכישה בגלריה</a>
-        <button class="btn btn-share" id="lb-share">שיתוף היצירה</button>
+        <a class="btn btn-buy" id="lb-buy" href="#" target="_blank" rel="noopener"></a>
+        <button class="btn btn-share" id="lb-share"></button>
       </div>
     </div>
   </div>
 </div>
 
-<div id="toast">הקישור הועתק 🎨</div>
+<div id="toast"></div>
 
 <footer>
-  כל היצירות זמינות לרכישה בגלריית
+  <span id="footer-text"></span>
   <a id="footer-gallery-link" href="#" target="_blank" rel="noopener">Under $1000</a>
 </footer>
 
 <script src="paintings.js"></script>
 <script>
   const paintings = window.PAINTINGS || [];
-  const fmt = new Intl.NumberFormat('he-IL', { style: 'currency', currency: 'ILS', maximumFractionDigits: 0 });
   const shareIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>';
+
+  const I18N = {
+    he: {
+      dir: 'rtl', locale: 'he-IL', toggle: 'English',
+      docTitle: 'צביה כפרי — גלריית ציורים',
+      name: 'צביה כפרי',
+      subtitle: 'ציורי אקריליק ושמן על בד ועץ — נוף, טבע ורגש בצבע',
+      galleryLink: '↗ לכל היצירות בגלריית Under $1000',
+      buy: 'לרכישה בגלריה',
+      buyLb: 'לצפייה ולרכישה בגלריה',
+      share: 'שיתוף היצירה',
+      shareAria: 'שיתוף',
+      toast: 'הקישור הועתק 🎨',
+      footer: 'כל היצירות זמינות לרכישה בגלריית',
+      cm: 'ס״מ',
+      shareText: (t) => `"${t}" — ציור מאת צביה כפרי`,
+    },
+    en: {
+      dir: 'ltr', locale: 'en-IL', toggle: 'עברית',
+      docTitle: 'Tzvia Kafri — Painting Gallery',
+      name: 'Tzvia Kafri',
+      subtitle: 'Acrylic and oil paintings on canvas and wood — landscape, nature and emotion in color',
+      galleryLink: '↗ All works at the Under $1000 gallery',
+      buy: 'Buy at the gallery',
+      buyLb: 'View & buy at the gallery',
+      share: 'Share this painting',
+      shareAria: 'Share',
+      toast: 'Link copied 🎨',
+      footer: 'All works are available for purchase at',
+      cm: 'cm',
+      shareText: (t) => `"${t}" — a painting by Tzvia Kafri`,
+    },
+  };
+
+  // ?lang= in a shared URL wins over the visitor's saved preference.
+  const urlLang = new URLSearchParams(location.search).get('lang');
+  let lang =
+    urlLang === 'en' || urlLang === 'he'
+      ? urlLang
+      : localStorage.getItem('gallery-lang') === 'en' ? 'en' : 'he';
+  let fmt;
+  const T = () => I18N[lang];
+  const pTitle = (p) => (lang === 'en' && p.titleEn ? p.titleEn : p.title);
+  const pSubTitle = (p) => (lang === 'en' ? (p.titleEn ? p.title : '') : p.titleEn || '');
+  const pDesc = (p) => (lang === 'en' ? p.descriptionEn || p.description : p.description) || '';
+  const pDims = (p) => (p.widthCm && p.heightCm ? `${p.widthCm}×${p.heightCm} ${T().cm}` : '');
 
   document.getElementById('full-gallery-link').href = window.GALLERY_URL;
   document.getElementById('footer-gallery-link').href = window.GALLERY_URL;
 
   const grid = document.getElementById('grid');
-  paintings.forEach((p, i) => {
-    const card = document.createElement('article');
-    card.className = 'card';
-    card.id = p.slug;
-    const dims = p.widthCm && p.heightCm ? `${p.widthCm}×${p.heightCm} ס״מ` : '';
-    card.innerHTML = `
-      <img src="${p.localThumb || p.thumb || p.image}" alt="${p.title}" loading="lazy" onclick="openLightbox(${i})"
-           onerror="this.onerror=null;this.src='${p.thumb || p.image}'">
-      <div class="info">
-        <h2>${p.title}</h2>
-        <div class="meta"><span>${dims}</span><span class="price">${p.price ? fmt.format(p.price) : ''}</span></div>
-        <div class="actions">
-          <a class="btn btn-buy" href="${p.url}" target="_blank" rel="noopener">לרכישה בגלריה</a>
-          <button class="btn btn-share" aria-label="שיתוף" onclick="share(${i})">${shareIcon}</button>
-        </div>
-      </div>`;
-    grid.appendChild(card);
-  });
+
+  function renderStatic() {
+    const t = T();
+    document.documentElement.lang = lang;
+    document.documentElement.dir = t.dir;
+    document.title = t.docTitle;
+    document.getElementById('lang-toggle').textContent = t.toggle;
+    document.getElementById('h-name').textContent = t.name;
+    document.getElementById('h-subtitle').textContent = t.subtitle;
+    document.getElementById('full-gallery-link').textContent = t.galleryLink;
+    document.getElementById('footer-text').textContent = t.footer;
+    document.getElementById('toast').textContent = t.toast;
+    document.getElementById('lb-buy').textContent = t.buyLb;
+    document.getElementById('lb-share').textContent = t.share;
+  }
+
+  function renderGrid() {
+    grid.innerHTML = '';
+    paintings.forEach((p, i) => {
+      const card = document.createElement('article');
+      card.className = 'card';
+      card.id = p.slug;
+      card.innerHTML = `
+        <img src="${p.localThumb || p.thumb || p.image}" alt="${pTitle(p)}" loading="lazy" onclick="openLightbox(${i})"
+             onerror="this.onerror=null;this.src='${p.thumb || p.image}'">
+        <div class="info">
+          <h2>${pTitle(p)}</h2>
+          <div class="meta"><span>${pDims(p)}</span><span class="price">${p.price ? fmt.format(p.price) : ''}</span></div>
+          <div class="actions">
+            <a class="btn btn-buy" href="${p.url}" target="_blank" rel="noopener">${T().buy}</a>
+            <button class="btn btn-share" aria-label="${T().shareAria}" onclick="share(${i})">${shareIcon}</button>
+          </div>
+        </div>`;
+      grid.appendChild(card);
+    });
+  }
+
+  function setLang(l) {
+    lang = l;
+    localStorage.setItem('gallery-lang', l);
+    fmt = new Intl.NumberFormat(T().locale, { style: 'currency', currency: 'ILS', maximumFractionDigits: 0 });
+    renderStatic();
+    renderGrid();
+    if (current >= 0) openLightbox(current);
+  }
+
+  function toggleLang() {
+    setLang(lang === 'he' ? 'en' : 'he');
+  }
 
   /* ---------- lightbox ---------- */
   let current = -1;
@@ -324,11 +417,10 @@
     lbImg.onerror = () => { lbImg.onerror = null; lbImg.src = p.image || p.thumb; };
     lbImg.src = p.localImage || p.image || p.thumb;
     lbImg.alt = p.title;
-    document.getElementById('lb-title').textContent = p.title;
-    document.getElementById('lb-en').textContent = p.titleEn || '';
-    document.getElementById('lb-dims').textContent =
-      p.widthCm && p.heightCm ? `${p.widthCm}×${p.heightCm} ס״מ` : '';
-    document.getElementById('lb-desc').textContent = p.description || '';
+    document.getElementById('lb-title').textContent = pTitle(p);
+    document.getElementById('lb-en').textContent = pSubTitle(p);
+    document.getElementById('lb-dims').textContent = pDims(p);
+    document.getElementById('lb-desc').textContent = pDesc(p);
     document.getElementById('lb-price').textContent = p.price ? fmt.format(p.price) : '';
     document.getElementById('lb-buy').href = p.url;
     document.getElementById('lb-share').onclick = () => share(i);
@@ -353,15 +445,17 @@
   document.addEventListener('keydown', (e) => {
     if (!lb.classList.contains('open')) return;
     if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowRight') navLightbox(-1); /* RTL: right = previous */
-    if (e.key === 'ArrowLeft') navLightbox(1);
+    /* Arrows follow reading direction: RTL right = previous, LTR right = next */
+    if (e.key === 'ArrowRight') navLightbox(lang === 'he' ? -1 : 1);
+    if (e.key === 'ArrowLeft') navLightbox(lang === 'he' ? 1 : -1);
   });
 
   /* ---------- share ---------- */
   async function share(i) {
     const p = paintings[i];
-    const url = location.origin + location.pathname + '#' + p.slug;
-    const text = `"${p.title}" — ציור מאת צביה כפרי`;
+    const url =
+      location.origin + location.pathname + (lang === 'en' ? '?lang=en' : '') + '#' + p.slug;
+    const text = T().shareText(pTitle(p));
     if (navigator.share) {
       try { await navigator.share({ title: text, text, url }); return; } catch (e) { /* cancelled */ }
     }
@@ -370,6 +464,9 @@
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 2200);
   }
+
+  /* ---------- init ---------- */
+  setLang(lang);
 
   /* ---------- deep link: #slug opens that painting ---------- */
   function openFromHash() {

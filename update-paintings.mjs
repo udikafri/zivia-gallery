@@ -83,12 +83,43 @@ function parseDescriptions(html) {
   return map;
 }
 
-function parseTitleEnMap(un) {
-  // Product records carry adjacent "title_en"/"title_he" pairs — map he → en.
+// Older records duplicate the Hebrew text into the *_en fields. English for
+// those is maintained here by hand (translations of the artist's own text) —
+// edit freely; re-runs keep these.
+const OVERRIDES = {
+  '--6ce3zw': {
+    titleEn: 'On the Bank of the Canal',
+    descriptionEn: 'A soldier in the Yom Kippur War on the bank of the Suez Canal.',
+  },
+  '--r178tb': { titleEn: 'Passions', descriptionEn: 'An eruption of passions.' },
+  '--lw688v': { titleEn: 'Sheep', descriptionEn: 'Three colorful sheep.' },
+  '--7zvqkt': { titleEn: 'Goldfish', descriptionEn: 'A goldfish in fairytale waters.' },
+};
+
+const hasHebrew = (s) => /[֐-׿]/.test(s || '');
+
+// Some source titles arrive all-lowercase ("family past") — title-case those.
+const SMALL_WORDS = new Set(['a', 'an', 'the', 'of', 'in', 'on', 'at', 'and', 'or']);
+function polishTitle(s) {
+  if (!s || s !== s.toLowerCase()) return s;
+  return s
+    .split(/\s+/)
+    .map((w, i) =>
+      i > 0 && SMALL_WORDS.has(w) ? w : w.charAt(0).toUpperCase() + w.slice(1)
+    )
+    .join(' ');
+}
+
+function parseEnMap(un) {
+  // Product records carry "title_en","title_he","description_en" adjacently —
+  // map he-title → English fields. Hebrew-duplicated *_en values are dropped.
   const map = new Map();
-  for (const m of un.matchAll(/"title_en":"(.*?)","title_he":"(.*?)"/g)) map.set(m[2], m[1]);
-  for (const m of un.matchAll(/"title_he":"(.*?)","title_en":"(.*?)"/g)) {
-    if (!map.has(m[1])) map.set(m[1], m[2]);
+  const re = /"title_en":"(.*?)","title_he":"(.*?)","description_en":"(.*?)","description_he":/g;
+  for (const m of un.matchAll(re)) {
+    map.set(m[2], {
+      titleEn: hasHebrew(m[1]) ? null : m[1].trim() || null,
+      descriptionEn: hasHebrew(m[3]) ? null : m[3].trim() || null,
+    });
   }
   return map;
 }
@@ -121,7 +152,7 @@ for (let page = 1; page <= 10; page++) {
   const cards = parseCards(html);
   const descriptions = parseDescriptions(html);
   const un = html.replace(/\\"/g, '"');
-  const titleEnMap = parseTitleEnMap(un);
+  const enMap = parseEnMap(un);
   const fresh = cards.filter((c) => !seen.has(c.slug));
   if (fresh.length === 0) break;
   for (const card of fresh) {
@@ -133,12 +164,12 @@ for (let page = 1; page <= 10; page++) {
     paintings.push({
       slug: card.slug,
       title: card.title,
-      // Older records store the Hebrew title in title_en too — drop the duplicate.
-      titleEn:
-        titleEnMap.get(card.title) && titleEnMap.get(card.title).trim() !== card.title
-          ? titleEnMap.get(card.title).trim()
-          : null,
+      titleEn: polishTitle(
+        OVERRIDES[card.slug]?.titleEn ?? enMap.get(card.title)?.titleEn ?? null
+      ),
       description: descriptions.get(card.title) || null,
+      descriptionEn:
+        OVERRIDES[card.slug]?.descriptionEn ?? enMap.get(card.title)?.descriptionEn ?? null,
       price: card.price,
       currency: 'ILS',
       widthCm: extras.widthCm,

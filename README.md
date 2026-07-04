@@ -25,6 +25,17 @@ GitHub Pages it's just a `git push`).
 
 Preview locally: `npx serve .` then open http://localhost:3000.
 
+## Languages
+
+The site is bilingual — Hebrew (default, RTL) and English (LTR). The toggle in
+the top corner switches everything: UI text, painting titles and descriptions,
+layout direction, and units. The visitor's choice is remembered, and shared
+links carry the language (`?lang=en`).
+
+English titles/descriptions come from under1000's data. The four older
+paintings have no English there, so their translations are hand-maintained in
+the `OVERRIDES` map at the top of `update-paintings.mjs` — edit them there.
+
 ## Sharing
 
 - The **share button** on each painting copies (or natively shares) a deep link
